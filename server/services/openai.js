@@ -1,9 +1,5 @@
 const { OpenAI } = require('openai');
 
-const openai = new OpenAI({
-  apiKey: process.env.OPENAI_API_KEY,
-});
-
 /**
  * Generate response from ChatGPT
  * @param {string} prompt - User prompt
@@ -14,8 +10,12 @@ async function generateResponse(prompt) {
     throw new Error('OpenAI API key not configured');
   }
 
+  const openai = new OpenAI({
+    apiKey: process.env.OPENAI_API_KEY,
+  });
+
   const message = await openai.chat.completions.create({
-    model: 'gpt-4',
+    model: 'gpt-4o-mini',
     messages: [
       {
         role: 'user',

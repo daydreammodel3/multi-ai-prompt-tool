@@ -1,9 +1,5 @@
 const Anthropic = require('@anthropic-ai/sdk');
 
-const anthropic = new Anthropic({
-  apiKey: process.env.ANTHROPIC_API_KEY,
-});
-
 /**
  * Generate response from Claude (Anthropic)
  * @param {string} prompt - User prompt
@@ -14,8 +10,12 @@ async function generateResponse(prompt) {
     throw new Error('Anthropic API key not configured');
   }
 
+  const anthropic = new Anthropic({
+    apiKey: process.env.ANTHROPIC_API_KEY,
+  });
+
   const message = await anthropic.messages.create({
-    model: 'claude-3-opus-20240229',
+    model: 'claude-3-5-sonnet-latest',
     max_tokens: 2000,
     messages: [
       {
