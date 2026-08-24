@@ -1,11 +1,7 @@
 const axios = require('axios');
 
 /**
- * Generate response from GitHub Copilot
- * Note: GitHub Copilot doesn't have a public API for chat completion.
- * This is a placeholder implementation that would require GitHub's Copilot API
- * when it becomes available, or use GitHub's Models API.
- * 
+ * Generate response from GitHub Copilot-backed GitHub Models endpoint.
  * @param {string} prompt - User prompt
  * @returns {Promise<Object>} Response object with model, content, and metadata
  */
@@ -15,12 +11,10 @@ async function generateResponse(prompt) {
   }
 
   try {
-    // Using GitHub's Models API (when available)
-    // For now, this is a placeholder using a hypothetical endpoint
     const response = await axios.post(
-      'https://api.github.com/models/chat/completions',
+      'https://models.github.ai/inference/chat/completions',
       {
-        model: 'gpt-4',
+        model: 'openai/gpt-4o-mini',
         messages: [
           {
             role: 'user',
@@ -32,11 +26,11 @@ async function generateResponse(prompt) {
       },
       {
         headers: {
-          'Authorization': `Bearer ${process.env.GITHUB_TOKEN}`,
-          'Accept': 'application/vnd.github.v3+json',
-          'X-GitHub-Api-Version': '2022-11-28',
+          Authorization: `Bearer ${process.env.GITHUB_TOKEN}`,
+          Accept: 'application/json',
+          'Content-Type': 'application/json',
         },
-      }
+      },
     );
 
     return {
@@ -45,14 +39,10 @@ async function generateResponse(prompt) {
       timestamp: new Date().toISOString(),
     };
   } catch (error) {
-    // Fallback: GitHub Copilot public API is not available yet
-    // Return a placeholder response
-    if (error.response?.status === 404 || error.response?.status === 401) {
-      throw new Error(
-        'GitHub Copilot API is not yet publicly available. ' +
-        'Please use the GitHub Copilot Chat interface directly.'
-      );
+    if (error.response?.status === 401 || error.response?.status === 403 || error.response?.status === 404) {
+      throw new Error('GitHub Models API is not available for the current token or account.');
     }
+
     throw error;
   }
 }

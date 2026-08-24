@@ -1,0 +1,15 @@
+services:
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: multi-ai-prompt-tool
+    ports:
+      - "${PORT:-3001}:3001"
+    env_file:
+      - path: .env
+        required: false
+    environment:
+      NODE_ENV: production
+      PORT: 3001
+    restart: unless-stopped

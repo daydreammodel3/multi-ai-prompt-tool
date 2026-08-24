@@ -59,22 +59,6 @@ GITHUB_TOKEN=your_github_token
 PORT=3001
 ```
 
-### 3. 依存パッケージのインストール
-
-```bash
-npm install
-cd client && npm install && cd ..
-```
-
-### 4. 開発サーバーの起動
-
-```bash
-npm run dev
-```
-
-- フロントエンド: http://localhost:5173
-- バックエンド: http://localhost:3001
-
 ## プロジェクト構成
 
 ```
@@ -82,26 +66,26 @@ multi-ai-prompt-tool/
 ├── server/                 # バックエンド (Node.js + Express)
 │   ├── index.js
 │   ├── routes/            # APIエンドポイント
-│   │   ├── prompts.js
-│   │   └── ai-services.js
+│   │   └── prompts.js
 │   ├── services/          # AI API統合
 │   │   ├── openai.js
 │   │   ├── gemini.js
 │   │   ├── claude.js
 │   │   └── github-copilot.js
-│   └── middleware/        # ミドルウェア
 ├── client/                # フロントエンド (React + TypeScript)
 │   ├── src/
-│   │   ├── components/   # UIコンポーネント
-│   │   ├── pages/        # ページ
-│   │   ├── services/     # API呼び出し
-│   │   ├── types/        # TypeScript型定義
-│   │   ├── styles/       # スタイル
-│   │   └── App.tsx
-│   └── package.json
+│   │   ├── App.tsx
+│   │   ├── api.ts
+│   │   ├── main.tsx
+│   │   ├── styles.css
+│   │   └── types.ts
+│   ├── index.html
+│   ├── package.json
+│   └── vite.config.ts
 ├── .env.example
 ├── package.json
 ├── tsconfig.json
+├── tsconfig.node.json
 └── README.md
 ```
 
@@ -111,6 +95,57 @@ multi-ai-prompt-tool/
 2. **AI選択**: 比較したいAIをチェック
 3. **送信**: 「送信」ボタンをクリック
 4. **比較**: 各AIの回答を横並びで確認
+
+## Docker で起動する
+
+### 1. 環境変数ファイルを作成
+
+```bash
+cp .env.example .env
+# .env に各APIキーを記入
+```
+
+### 2. ビルドと起動
+
+```bash
+docker compose up -d --build
+```
+
+- アプリ: http://localhost:3001
+- フロントエンドとAPIサーバーを 1 コンテナで配信
+- ホストの `.env` が存在しない場合も起動可（APIキー未設定でサービスが `Unavailable` 表示）
+
+### 3. 停止
+
+```bash
+docker compose down
+```
+
+### 4. ログ確認
+
+```bash
+docker compose logs -f
+```
+
+## ローカル開発サーバーで起動する
+
+```bash
+npm install
+cd client && npm install && cd ..
+npm run dev
+```
+
+- フロントエンド: http://localhost:5173
+- バックエンド: http://localhost:3001
+
+## 本番配信（Docker 不使用）
+
+```bash
+npm run build
+npm start
+```
+
+`npm start` は `client/dist` があれば、フロントエンドもまとめて配信します。
 
 ## ライセンス
 
