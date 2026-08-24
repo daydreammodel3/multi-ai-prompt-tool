@@ -21,9 +21,12 @@ RUN npm ci --omit=dev
 
 COPY server/ ./server/
 COPY --from=client-builder /app/client/dist ./client/dist
+RUN chown -R node:node /app
 
 ENV NODE_ENV=production \
     PORT=3001
+
+USER node
 
 EXPOSE 3001
 

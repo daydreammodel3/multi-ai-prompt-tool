@@ -5,7 +5,7 @@ const geminiService = require('../services/gemini');
 const claudeService = require('../services/claude');
 const githubService = require('../services/github-copilot');
 
-const SERVICE_CONFIG = {
+const SERVICE_CONFIG = Object.freeze({
   chatgpt: {
     id: 'chatgpt',
     name: 'ChatGPT (OpenAI)',
@@ -34,7 +34,11 @@ const SERVICE_CONFIG = {
     available: () => !!process.env.GITHUB_TOKEN,
     service: githubService,
   },
-};
+});
+
+function isKnownServiceId(value) {
+  return typeof value === 'string' && Object.prototype.hasOwnProperty.call(SERVICE_CONFIG, value);
+}
 
 function getModels() {
   return Object.values(SERVICE_CONFIG).map((service) => ({
@@ -58,10 +62,10 @@ router.post('/submit', async (req, res) => {
     }
 
     const normalizedPrompt = prompt.trim();
-    const uniqueSelectedAIs = [...new Set(selectedAIs)].filter((ai) => SERVICE_CONFIG[ai]);
-    const responses = {};
-    const errors = {};
-    const results = {};
+    const uniqueSelectedAIs = [...new Set(selectedAIs.filter(isKnownServiceId))];
+    const responses = Object.create(null);
+    const errors = Object.create(null);
+    const results = Object.create(null);
 
     if (uniqueSelectedAIs.length === 0) {
       return res.status(400).json({
